@@ -1,8 +1,13 @@
+from typing import List
+
+
 class Memory(object):
     _pointer = 0
     memory = {}
 
     MAX_MEMORY_OFFSET = 32775
+    REGISTER_COUNT = 8
+    REGISTER_OFFSET = MAX_MEMORY_OFFSET - REGISTER_COUNT
 
     def __getitem__(self, key: int) -> int:
         self.validate_key(key)
@@ -10,7 +15,7 @@ class Memory(object):
         try:
             return self.memory[key]
         except:
-            # Empty memory segments are just nulled out
+            # Empty memory segments are just empty
             return 0
 
     def __setitem__(self, key: int, value: int):
@@ -42,6 +47,18 @@ class Memory(object):
         self.validate_pointer(new_value)
         self.pointer = new_value
 
+    def get_register(self, index: int) -> int:
+        self.validate_register_index(index)
+        return self[self.REGISTER_OFFSET + index]
+
+    def set_register(self, index: int, value: int):
+        self.validate_register_index(index)
+        # Note that the value is validated in our setter
+        self[self.REGISTER_OFFSET + index] = value
+
+    def get_register_values(self) -> List[int]:
+        return [self.get_register(i) for i in range(0, self.REGISTER_COUNT)]
+
     def validate_key(self, key):
         if not type(key) == int:
             raise KeyError("Memory index must be an int")
@@ -69,6 +86,16 @@ class Memory(object):
             raise ValueError("Pointer must not be negative")
 
         if pointer > self.MAX_MEMORY_OFFSET:
-            raise ValueError(
-                f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}"
+            raise ValueError(f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}")
+
+    def validate_register_index(self, index):
+        if not type(index) == int:
+            raise KeyError("Register index must be an int")
+
+        if index < 0:
+            raise KeyError("Register index must not be negative")
+
+        if index > self.REGISTER_COUNT:
+            raise KeyError(
+                f"Register index must be between 0 and {self.REGISTER_COUNT}"
             )
