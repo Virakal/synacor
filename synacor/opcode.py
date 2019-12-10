@@ -120,6 +120,16 @@ class AddOpcode(Opcode):
 
         memory[destination] = (op1 + op2) % MATHS_MODULO
 
+class AndOpcode(Opcode):
+    desc = "stores into <a> the bitwise and of <b> and <c>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = op1 & op2
+
 
 class OutOpcode(Opcode):
     desc = "write the character represented by ascii code <a> to the terminal"
@@ -149,6 +159,7 @@ Opcode._opcodes = {
     7: JtOpcode(),
     8: JfOpcode(),
     9: AddOpcode(),
+    12: AndOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
