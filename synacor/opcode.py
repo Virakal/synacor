@@ -186,7 +186,7 @@ class RmemOpcode(Opcode):
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
-        source = memory.pop_argument(False)
+        source = memory.pop_argument()
 
         value = memory[source]
         memory[destination] = value
