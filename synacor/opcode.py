@@ -105,12 +105,14 @@ class NoopOpcode(Opcode):
 
 
 # Initialise the opcode cache
-Opcode._opcodes[0] = HaltOpcode()
-# Opcode._opcodes[1] = SetOpcode()
-# Opcode._opcodes[2] = PushOpcode()
-# Opcode._opcodes[3] = PopOpcode()
-Opcode._opcodes[6] = JmpOpcode()
-Opcode._opcodes[7] = JtOpcode()
-Opcode._opcodes[8] = JfOpcode()
-Opcode._opcodes[19] = OutOpcode()
-Opcode._opcodes[21] = NoopOpcode()
+Opcode._opcodes = {
+    0: HaltOpcode(),
+    1: SetOpcode(),
+    2: PushOpcode(),
+    3: PopOpcode(),
+    6: JmpOpcode(),
+    7: JtOpcode(),
+    8: JfOpcode(),
+    19: OutOpcode(),
+    21: NoopOpcode(),
+}
