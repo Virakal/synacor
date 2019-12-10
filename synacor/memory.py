@@ -1,7 +1,7 @@
 class Memory(object):
     _memory = {}
 
-    MAX_MEMORY_OFFSET = 2**16 - 1
+    MAX_MEMORY_OFFSET = 32775
 
     def __getitem__(self, key: int):
         self.validate_key(key)
