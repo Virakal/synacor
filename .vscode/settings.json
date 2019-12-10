@@ -1,7 +1,11 @@
 {
     "python.pythonPath": "C:/Users/Jon/.virtualenvs/synacor/Scripts/python.exe",
     "cSpell.words": [
-        "synacor"
+        "ints",
+        "opcode",
+        "specs",
+        "synacor",
+        "tokeniser"
     ],
     "python.testing.unittestArgs": [
         "-v",
