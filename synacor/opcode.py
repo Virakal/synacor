@@ -2,6 +2,7 @@ import sys
 
 from synacor.memory import Memory
 
+MATHS_MODULO = 32768
 
 class Opcode(object):
     _opcodes = {}
@@ -68,6 +69,16 @@ class JfOpcode(Opcode):
         if test == 0:
             memory.pointer = new_address
 
+class AddOpcode(Opcode):
+    desc = "assign into <a> the sum of <b> and <c> (modulo 32768)"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = (op1 + op2) % MATHS_MODULO
+
 
 class PushOpcode(Opcode):
     desc = "push <a> onto the stack"
@@ -110,6 +121,7 @@ Opcode._opcodes = {
     6: JmpOpcode(),
     7: JtOpcode(),
     8: JfOpcode(),
+    9: AddOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
