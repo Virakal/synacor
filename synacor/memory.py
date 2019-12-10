@@ -92,7 +92,7 @@ class Memory(object):
         Returns:
             bool -- whether the address is a register
         """
-        return key > self.REGISTER_OFFSET and key <= self.MAX_MEMORY_OFFSET
+        return self.REGISTER_OFFSET < key <= self.MAX_MEMORY_OFFSET
 
     def dereference_value(self, value: int) -> int:
         """Fetch the register value if the value is a register
