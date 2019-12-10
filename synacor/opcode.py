@@ -7,8 +7,9 @@ MATHS_MODULO = 32768
 
 
 class Opcode(object):
+    """An invalid opcode"""
+
     _opcodes: Mapping[int, "Opcode"] = {}
-    desc = "an invalid opcode"
 
     @property
     def name(self) -> str:
@@ -24,7 +25,7 @@ class Opcode(object):
 
 
 class HaltOpcode(Opcode):
-    desc = "stop execution and terminate the program"
+    """Stop execution and terminate the program"""
 
     def run(self, memory: Memory) -> None:
         print("Halting execution", file=sys.stderr)
@@ -32,7 +33,7 @@ class HaltOpcode(Opcode):
 
 
 class SetOpcode(Opcode):
-    desc = "set register <a> to the value of <b>"
+    """Set register <a> to the value of <b>"""
 
     def run(self, memory: Memory) -> None:
         register_index = memory.pop_argument(False)
@@ -41,7 +42,7 @@ class SetOpcode(Opcode):
 
 
 class PushOpcode(Opcode):
-    desc = "push <a> onto the stack"
+    """Push <a> onto the stack"""
 
     def run(self, memory: Memory) -> None:
         value = memory.pop_argument()
@@ -49,7 +50,7 @@ class PushOpcode(Opcode):
 
 
 class PopOpcode(Opcode):
-    desc = "remove the top element from the stack and write it into <a>; empty stack = error"
+    """Remove the top element from the stack and write it into <a>; empty stack = error"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -57,7 +58,7 @@ class PopOpcode(Opcode):
 
 
 class EqOpcode(Opcode):
-    desc = "set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise"
+    """Set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -68,7 +69,7 @@ class EqOpcode(Opcode):
 
 
 class GtOpcode(Opcode):
-    desc = "set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise"
+    """Set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -79,7 +80,7 @@ class GtOpcode(Opcode):
 
 
 class JmpOpcode(Opcode):
-    desc = "jump to <a>"
+    """Jump to <a>"""
 
     def run(self, memory: Memory) -> None:
         new_address = memory.get_at_pointer()
@@ -87,7 +88,7 @@ class JmpOpcode(Opcode):
 
 
 class JtOpcode(Opcode):
-    desc = "if <a> is nonzero, jump to <b>"
+    """If <a> is nonzero, jump to <b>"""
 
     def run(self, memory: Memory) -> None:
         test = memory.pop_argument()
@@ -98,7 +99,7 @@ class JtOpcode(Opcode):
 
 
 class JfOpcode(Opcode):
-    desc = "if <a> is zero, jump to <b>"
+    """If <a> is zero, jump to <b>"""
 
     def run(self, memory: Memory) -> None:
         test = memory.pop_argument()
@@ -109,7 +110,7 @@ class JfOpcode(Opcode):
 
 
 class AddOpcode(Opcode):
-    desc = "assign into <a> the sum of <b> and <c> (modulo 32768)"
+    """Assign into <a> the sum of <b> and <c> (modulo 32768)"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -120,7 +121,7 @@ class AddOpcode(Opcode):
 
 
 class MultOpcode(Opcode):
-    desc = "store into <a> the product of <b> and <c> (modulo 32768)"
+    """Store into <a> the product of <b> and <c> (modulo 32768)"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -131,7 +132,7 @@ class MultOpcode(Opcode):
 
 
 class ModOpcode(Opcode):
-    desc = "store into <a> the remainder of <b> divided by <c>"
+    """Store into <a> the remainder of <b> divided by <c>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -142,7 +143,7 @@ class ModOpcode(Opcode):
 
 
 class AndOpcode(Opcode):
-    desc = "stores into <a> the bitwise and of <b> and <c>"
+    """Stores into <a> the bitwise and of <b> and <c>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -153,7 +154,7 @@ class AndOpcode(Opcode):
 
 
 class OrOpcode(Opcode):
-    desc = "stores into <a> the bitwise or of <b> and <c>"
+    """Stores into <a> the bitwise or of <b> and <c>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -164,7 +165,7 @@ class OrOpcode(Opcode):
 
 
 class NotOpcode(Opcode):
-    desc = "stores 15-bit bitwise inverse of <b> in <a>"
+    """Stores 15-bit bitwise inverse of <b> in <a>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -180,7 +181,7 @@ class NotOpcode(Opcode):
 
 
 class RmemOpcode(Opcode):
-    desc = "read memory at address <b> and write it to <a>"
+    """Read memory at address <b> and write it to <a>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -191,7 +192,7 @@ class RmemOpcode(Opcode):
 
 
 class WmemOpcode(Opcode):
-    desc = "write the value from <b> into memory at address <a>"
+    """Write the value from <b> into memory at address <a>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
@@ -202,7 +203,7 @@ class WmemOpcode(Opcode):
 
 
 class CallOpcode(Opcode):
-    desc = "write the address of the next instruction to the stack and jump to <a>"
+    """Write the address of the next instruction to the stack and jump to <a>"""
 
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument()
@@ -213,7 +214,7 @@ class CallOpcode(Opcode):
 
 
 class RetOpcode(Opcode):
-    desc = "remove the top element from the stack and jump to it; empty stack = halt"
+    """Remove the top element from the stack and jump to it; empty stack = halt"""
 
     def run(self, memory: Memory) -> None:
         if len(memory.stack) == 0:
@@ -224,7 +225,7 @@ class RetOpcode(Opcode):
 
 
 class OutOpcode(Opcode):
-    desc = "write the character represented by ascii code <a> to the terminal"
+    """Write the character represented by ascii code <a> to the terminal"""
 
     def run(self, memory: Memory) -> None:
         charcode = memory.pop_argument()
@@ -232,9 +233,9 @@ class OutOpcode(Opcode):
 
 
 class InOpcode(Opcode):
-    desc = "read a character from the terminal and write its ascii code to <a>; it can be assumed that once input" \
-        " starts, it will continue until a newline is encountered; this means that you can safely read whole lines" \
-        " from the keyboard and trust that they will be fully read"
+    """Read a character from the terminal and write its ascii code to <a>; it can be assumed that once input
+     starts, it will continue until a newline is encountered; this means that you can safely read whole lines
+     from the keyboard and trust that they will be fully read"""
 
     def run(self, memory: Memory) -> None:
         # NYI
@@ -242,7 +243,7 @@ class InOpcode(Opcode):
 
 
 class NoopOpcode(Opcode):
-    desc = "no operation"
+    """No operation"""
 
     def run(self, memory: Memory) -> None:
         # Don't do anything
