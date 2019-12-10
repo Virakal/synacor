@@ -75,13 +75,19 @@ class Memory(object):
         value = self.get_at_pointer()
         self.increment_pointer()
 
-        if dereference_registers and self.is_register(value):
-            value = self[value]
+        if dereference_registers:
+            value = self.dereference_value(value)
 
         return value
 
     def is_register(self, key) -> bool:
         return key > self.REGISTER_OFFSET and key <= self.MAX_MEMORY_OFFSET
+
+    def dereference_value(self, value: int) -> int:
+        if self.is_register(value):
+            return self[value]
+
+        return value
 
     def validate_key(self, key) -> None:
         if not type(key) == int:
