@@ -181,6 +181,17 @@ class NotOpcode(Opcode):
         memory[destination] = new_value
 
 
+class RmemOpcode(Opcode):
+    desc = "read memory at address <b> and write it to <a>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        source = memory.pop_argument(False)
+
+        value = memory[source]
+        memory[destination] = value
+
+
 class CallOpcode(Opcode):
     desc = "write the address of the next instruction to the stack and jump to <a>"
 
@@ -225,6 +236,7 @@ Opcode._opcodes = {
     12: AndOpcode(),
     13: OrOpcode(),
     14: NotOpcode(),
+    15: RmemOpcode(),
     17: CallOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
