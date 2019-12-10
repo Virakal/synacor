@@ -59,6 +59,16 @@ class Memory(object):
     def get_register_values(self) -> List[int]:
         return [self.get_register(i) for i in range(0, self.REGISTER_COUNT)]
 
+    """Utility method to get the current memory value then increment
+
+    Returns:
+        int -- the current memory value
+    """
+    def pop_argument(self) -> int:
+        value = self.get_at_pointer()
+        self.increment_pointer()
+        return value
+
     def validate_key(self, key):
         if not type(key) == int:
             raise KeyError("Memory index must be an int")

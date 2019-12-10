@@ -48,10 +48,8 @@ class JtOpcode(Opcode):
     desc = "if <a> is nonzero, jump to <b>"
 
     def run(self, memory: Memory) -> None:
-        test = memory.get_at_pointer()
-        memory.increment_pointer()
-        new_address = memory.get_at_pointer()
-        memory.increment_pointer()
+        test = memory.pop_argument()
+        new_address = memory.pop_argument()
 
         if test > 0:
             memory.pointer = new_address
@@ -61,10 +59,8 @@ class JfOpcode(Opcode):
     desc = "if <a> is zero, jump to <b>"
 
     def run(self, memory: Memory) -> None:
-        test = memory.get_at_pointer()
-        memory.increment_pointer()
-        new_address = memory.get_at_pointer()
-        memory.increment_pointer()
+        test = memory.pop_argument()
+        new_address = memory.pop_argument()
 
         if test == 0:
             memory.pointer = new_address
@@ -90,9 +86,8 @@ class OutOpcode(Opcode):
     desc = "write the character represented by ascii code <a> to the terminal"
 
     def run(self, memory: Memory) -> None:
-        charcode = memory.get_at_pointer()
+        charcode = memory.pop_argument()
         print(chr(charcode), end="")
-        memory.increment_pointer()
 
 
 class NoopOpcode(Opcode):
