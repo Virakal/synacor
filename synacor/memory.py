@@ -33,7 +33,7 @@ class Memory(object):
         return len(self._memory)
 
     def __repr__(self) -> str:
-        return self._memory.__repr__()
+        return "R: " + repr(self.get_register_values()) + " S: " + repr(self.stack)
 
     def get_at_pointer(self) -> int:
         return self._memory[self.pointer]
