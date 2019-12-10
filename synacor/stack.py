@@ -1,10 +1,10 @@
-from typing import List
+from array import array
 
 
 class Stack(object):
     def __init__(self) -> None:
         super().__init__()
-        self._stack: List[int] = []
+        self._stack: array[int] = array('I')
 
     def push(self, value: int) -> None:
         self.validate_value(value)

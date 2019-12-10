@@ -1,4 +1,5 @@
-from typing import List, MutableMapping, Optional
+from array import array
+from typing import List, Optional
 
 from synacor.stack import Stack
 
@@ -10,7 +11,7 @@ class Memory(object):
 
     def __init__(self) -> None:
         super().__init__()
-        self._memory: MutableMapping[int, int] = {}
+        self._memory = array('I', (0 for x in range(self.MAX_MEMORY_OFFSET)))
         self._pointer = 0
 
         self.stack = Stack()
