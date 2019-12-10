@@ -29,3 +29,6 @@ class BinParser(object):
                 pointer += 1
 
             first = not first
+
+        # If we finished halfway through a word, something went wrong
+        assert first
