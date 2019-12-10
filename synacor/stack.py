@@ -17,7 +17,7 @@ class Stack(object):
         return len(self._stack)
 
     def __repr__(self) -> str:
-        return repr(self._stack)
+        return repr(self._stack.tolist())
 
     def validate_value(self, value: int) -> None:
         # TODO: Validate value
