@@ -1,3 +1,22 @@
 {
-    "python.pythonPath": "C:/Users/Jon/.virtualenvs/synacor/Scripts/python.exe"
+    "python.pythonPath": "C:/Users/Jon/.virtualenvs/synacor/Scripts/python.exe",
+    "cSpell.words": [
+        "synacor"
+    ],
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "*test*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": true,
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "[python]": {
+        "editor.rulers": [79, 119]
+    }
 }
