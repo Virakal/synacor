@@ -69,6 +69,6 @@ class Memory(object):
             raise ValueError("Pointer must not be negative")
 
         if pointer > self.MAX_MEMORY_OFFSET:
-            raise KeyError(
+            raise ValueError(
                 f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}"
             )
