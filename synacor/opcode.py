@@ -33,8 +33,7 @@ class SetOpcode(Opcode):
 
     def run(self, memory: Memory) -> None:
         # NYI
-        memory.increment_pointer()
-        memory.increment_pointer()
+        raise NotImplementedError("Invalid opcode")
 
 
 class JmpOpcode(Opcode):
@@ -76,7 +75,7 @@ class PushOpcode(Opcode):
 
     def run(self, memory: Memory) -> None:
         # NYI
-        pass
+        raise NotImplementedError("Invalid opcode")
 
 
 class PopOpcode(Opcode):
@@ -84,7 +83,7 @@ class PopOpcode(Opcode):
 
     def run(self, memory: Memory) -> None:
         # NYI
-        memory.increment_pointer()
+        raise NotImplementedError("Invalid opcode")
 
 
 class OutOpcode(Opcode):
