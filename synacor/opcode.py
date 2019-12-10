@@ -170,13 +170,7 @@ class NotOpcode(Opcode):
     def run(self, memory: Memory) -> None:
         destination = memory.pop_argument(False)
         value = memory.pop_argument()
-
-        # Ugly but very simple 'not'
-        bitwise_notted = (
-            format(value, "015b").replace("1", "2").replace("0", "1").replace("2", "0")
-        )
-
-        new_value = int(bitwise_notted, 2)
+        new_value = MATHS_MODULO - 1 - value
         memory[destination] = new_value
 
 
