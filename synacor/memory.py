@@ -64,7 +64,7 @@ class Memory(object):
         self[self.REGISTER_OFFSET + index] = value
 
     def get_register_values(self) -> List[int]:
-        return [self.get_register(i) for i in range(0, self.REGISTER_COUNT)]
+        return [self.get_register(i + 1) for i in range(0, self.REGISTER_COUNT)]
 
     def pop_argument(self, dereference_registers=True) -> int:
         """Utility method to get the current memory value then increment
