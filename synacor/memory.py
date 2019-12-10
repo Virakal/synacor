@@ -3,7 +3,7 @@ class Memory(object):
 
     MAX_MEMORY_OFFSET = 32775
 
-    def __getitem__(self, key: int):
+    def __getitem__(self, key: int) -> int:
         self.validate_key(key)
 
         try:
@@ -17,10 +17,10 @@ class Memory(object):
         self.validate_value(value)
         self.memory.__setitem__(key, value)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.memory)
 
-    def __repr__(self, *args):
+    def __repr__(self, *args) -> str:
         return self.memory.__repr__(*args)
 
     def validate_key(self, key):
