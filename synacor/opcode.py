@@ -32,8 +32,10 @@ class SetOpcode(Opcode):
     desc = "set register <a> to the value of <b>"
 
     def run(self, memory: Memory) -> None:
-        # NYI
-        raise NotImplementedError("Invalid opcode")
+        register_index = memory.pop_argument()
+        value = memory.pop_argument()
+
+        memory.set_register(register_index, value)
 
 
 class JmpOpcode(Opcode):
