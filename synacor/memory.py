@@ -65,13 +65,15 @@ class Memory(object):
     def get_register_values(self) -> List[int]:
         return [self.get_register(i) for i in range(0, self.REGISTER_COUNT)]
 
-    """Utility method to get the current memory value then increment
-
-    Returns:
-        int -- the current memory value
-    """
-
     def pop_argument(self, dereference_registers=True) -> int:
+        """Utility method to get the current memory value then increment
+
+        Keyword Arguments:
+            dereference_registers {bool} -- whether to fetch the values stored in register arguments (default: {True})
+
+        Returns:
+            int -- the current memory value
+        """
         value = self.get_at_pointer()
         self.increment_pointer()
 
