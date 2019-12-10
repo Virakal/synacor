@@ -1,5 +1,6 @@
 from typing import List
 
+from synacor.stack import Stack
 
 class Memory(object):
     MAX_MEMORY_OFFSET = 32775
@@ -10,6 +11,8 @@ class Memory(object):
         super().__init__()
         self._memory = {}
         self._pointer = 0
+
+        self.stack = Stack()
 
     def __getitem__(self, key: int) -> int:
         self.validate_key(key)
