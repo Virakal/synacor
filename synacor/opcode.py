@@ -7,7 +7,7 @@ MATHS_MODULO = 32768
 
 
 class Opcode(object):
-    _opcodes: Mapping[int, 'Opcode'] = {}
+    _opcodes: Mapping[int, "Opcode"] = {}
     desc = "an invalid opcode"
 
     @property
@@ -67,6 +67,17 @@ class EqOpcode(Opcode):
         op2 = memory.pop_argument()
 
         memory[destination] = int(op1 == op2)
+
+
+class GtOpcode(Opcode):
+    desc = "set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = int(op1 > op2)
 
 
 class JmpOpcode(Opcode):
@@ -133,6 +144,7 @@ Opcode._opcodes = {
     2: PushOpcode(),
     3: PopOpcode(),
     4: EqOpcode(),
+    5: GtOpcode(),
     6: JmpOpcode(),
     7: JtOpcode(),
     8: JfOpcode(),
