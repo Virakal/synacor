@@ -1,4 +1,5 @@
 class Memory(object):
+    _pointer = 0
     memory = {}
 
     MAX_MEMORY_OFFSET = 32775
@@ -23,6 +24,24 @@ class Memory(object):
     def __repr__(self, *args) -> str:
         return self.memory.__repr__(*args)
 
+    def get_at_pointer(self) -> int:
+        return self.memory[self.pointer]
+
+    def increment_pointer(self):
+        self.pointer += 1
+
+    def decrement_pointer(self):
+        self.pointer -= 1
+
+    @property
+    def pointer(self) -> int:
+        return self._pointer
+
+    @pointer.setter
+    def pointer(self, new_value: int):
+        self.validate_pointer(new_value)
+        self.pointer = new_value
+
     def validate_key(self, key):
         if not type(key) == int:
             raise KeyError("Memory index must be an int")
@@ -38,3 +57,18 @@ class Memory(object):
     def validate_value(self, value):
         if not type(value) == int:
             raise ValueError("Memory value must be an int")
+
+    def validate_pointer(self, pointer=None):
+        if pointer is None:
+            pointer = self.pointer
+
+        if not type(pointer) == int:
+            raise ValueError("Pointer is not an int!")
+
+        if pointer < 0:
+            raise ValueError("Pointer must not be negative")
+
+        if pointer > self.MAX_MEMORY_OFFSET:
+            raise KeyError(
+                f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}"
+            )
