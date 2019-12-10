@@ -120,6 +120,7 @@ class AddOpcode(Opcode):
 
         memory[destination] = (op1 + op2) % MATHS_MODULO
 
+
 class MultOpcode(Opcode):
     desc = "store into <a> the product of <b> and <c> (modulo 32768)"
 
@@ -129,6 +130,17 @@ class MultOpcode(Opcode):
         op2 = memory.pop_argument()
 
         memory[destination] = (op1 * op2) % MATHS_MODULO
+
+
+class ModOpcode(Opcode):
+    desc = "store into <a> the remainder of <b> divided by <c>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = op1 % op2
 
 
 class AndOpcode(Opcode):
@@ -209,6 +221,7 @@ Opcode._opcodes = {
     8: JfOpcode(),
     9: AddOpcode(),
     10: MultOpcode(),
+    11: ModOpcode(),
     12: AndOpcode(),
     13: OrOpcode(),
     14: NotOpcode(),
