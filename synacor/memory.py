@@ -2,18 +2,20 @@ from typing import List
 
 
 class Memory(object):
-    _pointer = 0
-    memory = {}
-
     MAX_MEMORY_OFFSET = 32775
     REGISTER_COUNT = 8
     REGISTER_OFFSET = MAX_MEMORY_OFFSET - REGISTER_COUNT
+
+    def __init__(self):
+        super().__init__()
+        self._memory = {}
+        self._pointer = 0
 
     def __getitem__(self, key: int) -> int:
         self.validate_key(key)
 
         try:
-            return self.memory[key]
+            return self._memory[key]
         except:
             # Empty memory segments are just empty
             return 0
@@ -21,16 +23,16 @@ class Memory(object):
     def __setitem__(self, key: int, value: int):
         self.validate_key(key)
         self.validate_value(value)
-        self.memory.__setitem__(key, value)
+        self._memory.__setitem__(key, value)
 
     def __len__(self) -> int:
-        return len(self.memory)
+        return len(self._memory)
 
     def __repr__(self, *args) -> str:
-        return self.memory.__repr__(*args)
+        return self._memory.__repr__(*args)
 
     def get_at_pointer(self) -> int:
-        return self.memory[self.pointer]
+        return self._memory[self.pointer]
 
     def increment_pointer(self):
         self.pointer += 1
