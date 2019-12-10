@@ -51,10 +51,10 @@ class JtOpcode(Opcode):
     def run(self, memory: Memory) -> None:
         test = memory.get_at_pointer()
         memory.increment_pointer()
+        new_address = memory.get_at_pointer()
         memory.increment_pointer()
 
         if test > 0:
-            new_address = memory.get_at_pointer()
             memory.pointer = new_address
 
 
@@ -64,10 +64,10 @@ class JfOpcode(Opcode):
     def run(self, memory: Memory) -> None:
         test = memory.get_at_pointer()
         memory.increment_pointer()
+        new_address = memory.get_at_pointer()
         memory.increment_pointer()
 
         if test == 0:
-            new_address = memory.get_at_pointer()
             memory.pointer = new_address
 
 
