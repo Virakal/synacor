@@ -1,6 +1,6 @@
 import sys
-
 from typing import Mapping
+
 from synacor.memory import Memory
 
 MATHS_MODULO = 32768
@@ -36,10 +36,8 @@ class SetOpcode(Opcode):
 
     def run(self, memory: Memory) -> None:
         register_index = memory.pop_argument(False)
-        register_index -= memory.REGISTER_OFFSET
         value = memory.pop_argument()
-
-        memory.set_register(register_index, value)
+        memory[register_index] = value
 
 
 class PushOpcode(Opcode):
