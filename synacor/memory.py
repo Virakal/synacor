@@ -64,10 +64,17 @@ class Memory(object):
     Returns:
         int -- the current memory value
     """
-    def pop_argument(self) -> int:
+    def pop_argument(self, dereference_registers=True) -> int:
         value = self.get_at_pointer()
         self.increment_pointer()
+
+        if dereference_registers and self.is_register(value):
+            value = self[value]
+
         return value
+
+    def is_register(self, key) -> bool:
+        return key > self.REGISTER_OFFSET and key <= self.MAX_MEMORY_OFFSET
 
     def validate_key(self, key):
         if not type(key) == int:
