@@ -32,7 +32,8 @@ class SetOpcode(Opcode):
     desc = "set register <a> to the value of <b>"
 
     def run(self, memory: Memory) -> None:
-        register_index = memory.pop_argument()
+        register_index = memory.pop_argument(False)
+        register_index -= memory.REGISTER_OFFSET
         value = memory.pop_argument()
 
         memory.set_register(register_index, value)
