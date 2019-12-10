@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, MutableMapping
 
 from synacor.stack import Stack
+
 
 class Memory(object):
     MAX_MEMORY_OFFSET = 32775
@@ -9,7 +10,7 @@ class Memory(object):
 
     def __init__(self) -> None:
         super().__init__()
-        self._memory = {}
+        self._memory: MutableMapping[int, int] = {}
         self._pointer = 0
 
         self.stack = Stack()
@@ -26,7 +27,7 @@ class Memory(object):
     def __setitem__(self, key: int, value: int) -> None:
         self.validate_key(key)
         self.validate_value(value)
-        self._memory.__setitem__(key, value)
+        self._memory[key] = value
 
     def __len__(self) -> int:
         return len(self._memory)
@@ -69,6 +70,7 @@ class Memory(object):
     Returns:
         int -- the current memory value
     """
+
     def pop_argument(self, dereference_registers=True) -> int:
         value = self.get_at_pointer()
         self.increment_pointer()
