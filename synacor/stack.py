@@ -16,6 +16,9 @@ class Stack(object):
     def __len__(self) -> int:
         return len(self._stack)
 
+    def __repr__(self) -> str:
+        return repr(self._stack)
+
     def validate_value(self, value: int) -> None:
         # TODO: Validate value
         pass
