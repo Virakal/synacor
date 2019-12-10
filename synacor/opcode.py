@@ -4,6 +4,7 @@ from synacor.memory import Memory
 
 MATHS_MODULO = 32768
 
+
 class Opcode(object):
     _opcodes = {}
     desc = "an invalid opcode"
@@ -40,6 +41,33 @@ class SetOpcode(Opcode):
         memory.set_register(register_index, value)
 
 
+class PushOpcode(Opcode):
+    desc = "push <a> onto the stack"
+
+    def run(self, memory: Memory) -> None:
+        # NYI
+        raise NotImplementedError("Invalid opcode")
+
+
+class PopOpcode(Opcode):
+    desc = "remove the top element from the stack and write it into <a>; empty stack = error"
+
+    def run(self, memory: Memory) -> None:
+        # NYI
+        raise NotImplementedError("Invalid opcode")
+
+
+class EqOpcode(Opcode):
+    desc = "set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = int(op1 == op2)
+
+
 class JmpOpcode(Opcode):
     desc = "jump to <a>"
 
@@ -69,6 +97,7 @@ class JfOpcode(Opcode):
         if test == 0:
             memory.pointer = new_address
 
+
 class AddOpcode(Opcode):
     desc = "assign into <a> the sum of <b> and <c> (modulo 32768)"
 
@@ -78,22 +107,6 @@ class AddOpcode(Opcode):
         op2 = memory.pop_argument()
 
         memory[destination] = (op1 + op2) % MATHS_MODULO
-
-
-class PushOpcode(Opcode):
-    desc = "push <a> onto the stack"
-
-    def run(self, memory: Memory) -> None:
-        # NYI
-        raise NotImplementedError("Invalid opcode")
-
-
-class PopOpcode(Opcode):
-    desc = "remove the top element from the stack and write it into <a>; empty stack = error"
-
-    def run(self, memory: Memory) -> None:
-        # NYI
-        raise NotImplementedError("Invalid opcode")
 
 
 class OutOpcode(Opcode):
@@ -118,6 +131,7 @@ Opcode._opcodes = {
     1: SetOpcode(),
     2: PushOpcode(),
     3: PopOpcode(),
+    4: EqOpcode(),
     6: JmpOpcode(),
     7: JtOpcode(),
     8: JfOpcode(),
