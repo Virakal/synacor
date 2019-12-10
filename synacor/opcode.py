@@ -37,6 +37,13 @@ class SetOpcode(Opcode):
         memory.increment_pointer()
 
 
+class JmpOpcode(Opcode):
+    desc = "jump to <a>"
+
+    def run(self, memory: Memory) -> None:
+        new_address = memory.get_at_pointer()
+        memory.pointer = new_address
+
 class PushOpcode(Opcode):
     desc = "push <a> onto the stack"
 
@@ -75,5 +82,6 @@ Opcode._opcodes[0] = HaltOpcode()
 Opcode._opcodes[1] = SetOpcode()
 Opcode._opcodes[2] = PushOpcode()
 Opcode._opcodes[3] = PopOpcode()
+Opcode._opcodes[6] = JmpOpcode()
 Opcode._opcodes[19] = OutOpcode()
 Opcode._opcodes[21] = NoopOpcode()
