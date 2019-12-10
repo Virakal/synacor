@@ -45,16 +45,16 @@ class PushOpcode(Opcode):
     desc = "push <a> onto the stack"
 
     def run(self, memory: Memory) -> None:
-        # NYI
-        raise NotImplementedError("Invalid opcode")
+        value = memory.pop_argument()
+        memory.stack.push(value)
 
 
 class PopOpcode(Opcode):
     desc = "remove the top element from the stack and write it into <a>; empty stack = error"
 
     def run(self, memory: Memory) -> None:
-        # NYI
-        raise NotImplementedError("Invalid opcode")
+        destination = memory.pop_argument(False)
+        memory[destination] = memory.stack.pop()
 
 
 class EqOpcode(Opcode):
