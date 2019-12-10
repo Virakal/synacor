@@ -143,6 +143,22 @@ class OrOpcode(Opcode):
         memory[destination] = op1 | op2
 
 
+class NotOpcode(Opcode):
+    desc = "stores 15-bit bitwise inverse of <b> in <a>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        value = memory.pop_argument()
+
+        # Ugly but very simple 'not'
+        bitwise_notted = (
+            format(value, "015b").replace("1", "2").replace("0", "1").replace("2", "0")
+        )
+
+        new_value = int(bitwise_notted, 2)
+        memory[destination] = new_value
+
+
 class OutOpcode(Opcode):
     desc = "write the character represented by ascii code <a> to the terminal"
 
@@ -173,6 +189,7 @@ Opcode._opcodes = {
     9: AddOpcode(),
     12: AndOpcode(),
     13: OrOpcode(),
+    14: NotOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
