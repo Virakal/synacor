@@ -159,6 +159,17 @@ class NotOpcode(Opcode):
         memory[destination] = new_value
 
 
+class CallOpcode(Opcode):
+    desc = "write the address of the next instruction to the stack and jump to <a>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument()
+        next_instruction = memory.pointer
+
+        memory.stack.push(next_instruction)
+        memory.pointer = destination
+
+
 class OutOpcode(Opcode):
     desc = "write the character represented by ascii code <a> to the terminal"
 
@@ -190,6 +201,7 @@ Opcode._opcodes = {
     12: AndOpcode(),
     13: OrOpcode(),
     14: NotOpcode(),
+    17: CallOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
