@@ -3,14 +3,12 @@ from textwrap import wrap
 from typing import List
 
 from synacor.memory import Memory
-from synacor.tokeniser import Tokeniser
 
 
 class BinParser(object):
-    HIGH_BYTE_OFFSET = 2**8
+    HIGH_BYTE_OFFSET = 2 ** 8
 
     def __init__(self, memory: Memory):
-        self.tokeniser = Tokeniser()
         self.memory = memory
 
     def file_into_memory(self, path, memory_offset=0):
