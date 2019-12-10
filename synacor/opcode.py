@@ -212,6 +212,17 @@ class CallOpcode(Opcode):
         memory.pointer = destination
 
 
+class RetOpcode(Opcode):
+    desc = "remove the top element from the stack and jump to it; empty stack = halt"
+
+    def run(self, memory: Memory) -> None:
+        if len(memory.stack) == 0:
+            raise RecursionError("Tried to call ret with an empty stack")
+
+        destination = memory.stack.pop()
+        memory.pointer = destination
+
+
 class OutOpcode(Opcode):
     desc = "write the character represented by ascii code <a> to the terminal"
 
@@ -248,6 +259,7 @@ Opcode._opcodes = {
     15: RmemOpcode(),
     16: WmemOpcode(),
     17: CallOpcode(),
+    18: RetOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
