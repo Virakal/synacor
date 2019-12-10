@@ -4,6 +4,7 @@
         "ints",
         "opcode",
         "opcodes",
+        "pylint",
         "specs",
         "synacor",
         "tokeniser"

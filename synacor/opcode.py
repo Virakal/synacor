@@ -1,12 +1,13 @@
 import sys
 
+from typing import Mapping
 from synacor.memory import Memory
 
 MATHS_MODULO = 32768
 
 
 class Opcode(object):
-    _opcodes = {}
+    _opcodes: Mapping[int, 'Opcode'] = {}
     desc = "an invalid opcode"
 
     @property

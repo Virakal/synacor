@@ -7,7 +7,7 @@ class Memory(object):
     REGISTER_COUNT = 8
     REGISTER_OFFSET = MAX_MEMORY_OFFSET - REGISTER_COUNT
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._memory = {}
         self._pointer = 0
@@ -23,7 +23,7 @@ class Memory(object):
             # Empty memory segments are just empty
             return 0
 
-    def __setitem__(self, key: int, value: int):
+    def __setitem__(self, key: int, value: int) -> None:
         self.validate_key(key)
         self.validate_value(value)
         self._memory.__setitem__(key, value)
@@ -31,16 +31,16 @@ class Memory(object):
     def __len__(self) -> int:
         return len(self._memory)
 
-    def __repr__(self, *args) -> str:
-        return self._memory.__repr__(*args)
+    def __repr__(self) -> str:
+        return self._memory.__repr__()
 
     def get_at_pointer(self) -> int:
         return self._memory[self.pointer]
 
-    def increment_pointer(self):
+    def increment_pointer(self) -> None:
         self.pointer += 1
 
-    def decrement_pointer(self):
+    def decrement_pointer(self) -> None:
         self.pointer -= 1
 
     @property
@@ -48,7 +48,7 @@ class Memory(object):
         return self._pointer
 
     @pointer.setter
-    def pointer(self, new_value: int):
+    def pointer(self, new_value: int) -> None:
         self.validate_pointer(new_value)
         self._pointer = new_value
 
@@ -56,7 +56,7 @@ class Memory(object):
         self.validate_register_index(index)
         return self[self.REGISTER_OFFSET + index]
 
-    def set_register(self, index: int, value: int):
+    def set_register(self, index: int, value: int) -> None:
         self.validate_register_index(index)
         # Note that the value is validated in our setter
         self[self.REGISTER_OFFSET + index] = value
@@ -81,7 +81,7 @@ class Memory(object):
     def is_register(self, key) -> bool:
         return key > self.REGISTER_OFFSET and key <= self.MAX_MEMORY_OFFSET
 
-    def validate_key(self, key):
+    def validate_key(self, key) -> None:
         if not type(key) == int:
             raise KeyError("Memory index must be an int")
 
@@ -93,11 +93,11 @@ class Memory(object):
                 f"Memory index must be between 0 and {self.MAX_MEMORY_OFFSET}"
             )
 
-    def validate_value(self, value):
+    def validate_value(self, value) -> None:
         if not type(value) == int:
             raise ValueError("Memory value must be an int")
 
-    def validate_pointer(self, pointer=None):
+    def validate_pointer(self, pointer=None) -> None:
         if pointer is None:
             pointer = self.pointer
 
@@ -110,7 +110,7 @@ class Memory(object):
         if pointer > self.MAX_MEMORY_OFFSET:
             raise ValueError(f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}")
 
-    def validate_register_index(self, index):
+    def validate_register_index(self, index) -> None:
         if not type(index) == int:
             raise KeyError("Register index must be an int")
 

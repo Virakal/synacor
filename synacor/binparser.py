@@ -8,10 +8,10 @@ from synacor.memory import Memory
 class BinParser(object):
     HIGH_BYTE_OFFSET = 2 ** 8
 
-    def __init__(self, memory: Memory):
+    def __init__(self, memory: Memory) -> None:
         self.memory = memory
 
-    def file_into_memory(self, path, memory_offset=0):
+    def file_into_memory(self, path, memory_offset: int = 0) -> None:
         # The Path object has a read_bytes method which makes out lives easier
         path = Path(path)
 
