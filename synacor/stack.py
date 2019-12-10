@@ -13,6 +13,9 @@ class Stack(object):
     def pop(self) -> int:
         return self._stack.pop()
 
+    def __len__(self) -> int:
+        return len(self._stack)
+
     def validate_value(self, value: int) -> None:
         # TODO: Validate value
         pass
