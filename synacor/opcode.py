@@ -120,6 +120,7 @@ class AddOpcode(Opcode):
 
         memory[destination] = (op1 + op2) % MATHS_MODULO
 
+
 class AndOpcode(Opcode):
     desc = "stores into <a> the bitwise and of <b> and <c>"
 
@@ -129,6 +130,17 @@ class AndOpcode(Opcode):
         op2 = memory.pop_argument()
 
         memory[destination] = op1 & op2
+
+
+class OrOpcode(Opcode):
+    desc = "stores into <a> the bitwise or of <b> and <c>"
+
+    def run(self, memory: Memory) -> None:
+        destination = memory.pop_argument(False)
+        op1 = memory.pop_argument()
+        op2 = memory.pop_argument()
+
+        memory[destination] = op1 | op2
 
 
 class OutOpcode(Opcode):
@@ -160,6 +172,7 @@ Opcode._opcodes = {
     8: JfOpcode(),
     9: AddOpcode(),
     12: AndOpcode(),
+    13: OrOpcode(),
     19: OutOpcode(),
     21: NoopOpcode(),
 }
