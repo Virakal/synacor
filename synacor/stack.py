@@ -1,7 +1,10 @@
+from typing import List
+
+
 class Stack(object):
     def __init__(self) -> None:
         super().__init__()
-        self._stack = []
+        self._stack: List[int] = []
 
     def push(self, value: int) -> None:
         self.validate_value(value)
