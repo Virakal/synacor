@@ -45,7 +45,7 @@ class Memory(object):
     @pointer.setter
     def pointer(self, new_value: int):
         self.validate_pointer(new_value)
-        self.pointer = new_value
+        self._pointer = new_value
 
     def get_register(self, index: int) -> int:
         self.validate_register_index(index)
