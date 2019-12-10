@@ -231,6 +231,16 @@ class OutOpcode(Opcode):
         print(chr(charcode), end="")
 
 
+class InOpcode(Opcode):
+    desc = "read a character from the terminal and write its ascii code to <a>; it can be assumed that once input" \
+        " starts, it will continue until a newline is encountered; this means that you can safely read whole lines" \
+        " from the keyboard and trust that they will be fully read"
+
+    def run(self, memory: Memory) -> None:
+        # NYI
+        raise NotImplementedError("'In' opcode not yet implemented")
+
+
 class NoopOpcode(Opcode):
     desc = "no operation"
 
@@ -261,5 +271,6 @@ Opcode._opcodes = {
     17: CallOpcode(),
     18: RetOpcode(),
     19: OutOpcode(),
+    20: InOpcode(),
     21: NoopOpcode(),
 }
