@@ -1,4 +1,4 @@
-from typing import List, MutableMapping
+from typing import List, MutableMapping, Optional
 
 from synacor.stack import Stack
 
@@ -82,16 +82,32 @@ class Memory(object):
 
         return value
 
-    def is_register(self, key) -> bool:
+    def is_register(self, key: int) -> bool:
+        """Whether the given memory address is the address of a register
+
+        Arguments:
+            key {int} -- the memory address to check
+
+        Returns:
+            bool -- whether the address is a register
+        """
         return key > self.REGISTER_OFFSET and key <= self.MAX_MEMORY_OFFSET
 
     def dereference_value(self, value: int) -> int:
+        """Fetch the register value if the value is a register
+
+        Arguments:
+            value {int} -- the value to check
+
+        Returns:
+            int -- the value or the value from the specified register
+        """
         if self.is_register(value):
             return self[value]
 
         return value
 
-    def validate_key(self, key) -> None:
+    def validate_key(self, key: int) -> None:
         if not type(key) == int:
             raise KeyError("Memory index must be an int")
 
@@ -103,11 +119,11 @@ class Memory(object):
                 f"Memory index must be between 0 and {self.MAX_MEMORY_OFFSET}"
             )
 
-    def validate_value(self, value) -> None:
+    def validate_value(self, value: int) -> None:
         if not type(value) == int:
             raise ValueError("Memory value must be an int")
 
-    def validate_pointer(self, pointer=None) -> None:
+    def validate_pointer(self, pointer: Optional[int] = None) -> None:
         if pointer is None:
             pointer = self.pointer
 
@@ -120,7 +136,7 @@ class Memory(object):
         if pointer > self.MAX_MEMORY_OFFSET:
             raise ValueError(f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}")
 
-    def validate_register_index(self, index) -> None:
+    def validate_register_index(self, index: int) -> None:
         if not type(index) == int:
             raise KeyError("Register index must be an int")
 
