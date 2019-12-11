@@ -12,3 +12,8 @@ class MemoryTests(unittest.TestCase):
     def test_add(self):
         self.op.op_add(32768, 40, 99)
         self.assertEquals(self.memory[32768], 40 + 99)
+
+        # Modulo Test
+        self.op.op_add(32769, 32758, 15)
+        self.assertEquals(self.memory[32769], 5)
+
