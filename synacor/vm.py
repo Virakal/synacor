@@ -1,6 +1,6 @@
 from synacor.binparser import BinParser
 from synacor.memory import Memory
-from synacor.opcode import Opcodes
+from synacor.opcodes import Opcodes
 
 
 class VM(object):
