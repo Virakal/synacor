@@ -54,6 +54,7 @@ class Opcodes(object):
     def __init__(self, memory: Memory) -> None:
         super().__init__()
         self.memory = memory
+        self._method_params = self._calculate_method_params()
 
     def run(self, opcode: int) -> None:
         try:
@@ -64,21 +65,14 @@ class Opcodes(object):
 
         method_name = "op_" + op_name
         method = getattr(self, method_name)
-        signature = inspect.signature(method)
-        params_to_pass: Dict[str, int] = {}
+        params = self._method_params[method_name]
+        kwargs: Dict[str, int] = {}
 
-        for param_name in signature.parameters:
-            # Check if method has a dereference annotation
-            # TODO: Do this at load instead of call time
-            try:
-                dereference = param_name not in method.absolute_params
-            except (AttributeError):
-                dereference = True
-
-            params_to_pass[param_name] = self.memory.pop_argument(dereference)
+        for param_name, dereference in params.items():
+            kwargs[param_name] = self.memory.pop_argument(dereference)
 
         # Call the method with the arguments
-        method(**params_to_pass)
+        method(**kwargs)
 
     def op_halt(self) -> None:
         """Stop execution and terminate the program"""
@@ -196,3 +190,24 @@ class Opcodes(object):
     def op_noop(self) -> None:
         """No operation"""
         pass
+
+    def _calculate_method_params(self) -> Dict[str, Dict[str, bool]]:
+        """Return information about the op_* methods"""
+        params: Dict[str, Dict[str, bool]] = {}
+        methods = [x for x in dir(self) if x.startswith('op_')]
+
+        for method_name in methods:
+            method = getattr(self, method_name)
+            signature = inspect.signature(method)
+            params[method_name] = {}
+
+            for param_name in signature.parameters:
+                # Check if method has a dereference annotation
+                try:
+                    dereference = param_name not in method.absolute_params
+                except (AttributeError):
+                    dereference = True
+
+                params[method_name][param_name] = dereference
+
+        return params
