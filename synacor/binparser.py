@@ -4,6 +4,11 @@ from typing import List
 
 from synacor.memory import Memory
 
+try:
+    import numpy
+except:
+    pass
+
 
 class BinParser(object):
     HIGH_BYTE_OFFSET = 2 ** 8
@@ -12,6 +17,16 @@ class BinParser(object):
         self.memory = memory
 
     def file_into_memory(self, path, memory_offset: int = 0) -> None:
+        if "numpy" in globals():
+            self.file_into_memory_numpy(path, memory_offset)
+        else:
+            self.file_into_memory_array(path, memory_offset)
+
+    def file_into_memory_numpy(self, path, memory_offset: int = 0) -> None:
+        code = numpy.fromfile(path, dtype=numpy.dtype("<u2"))
+        self.memory._memory[memory_offset : len(code)] = code.copy()
+
+    def file_into_memory_array(self, path, memory_offset: int = 0) -> None:
         # The Path object has a read_bytes method which makes out lives easier
         path = Path(path)
 
