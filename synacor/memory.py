@@ -25,7 +25,7 @@ class Memory(object):
         self._memory[key] = value
 
     def __len__(self) -> int:
-        return len(self._memory)
+        return self.MAX_MEMORY_OFFSET + 1
 
     def __repr__(self) -> str:
         return "R: " + repr(self.get_register_values()) + " S: " + repr(self.stack)
