@@ -11,19 +11,13 @@ class Memory(object):
 
     def __init__(self) -> None:
         super().__init__()
-        self._memory = array('I', (0 for x in range(self.MAX_MEMORY_OFFSET)))
+        self._memory = array('I', (0 for x in range(self.MAX_MEMORY_OFFSET + 1)))
         self._pointer = 0
-
         self.stack = Stack()
 
     def __getitem__(self, key: int) -> int:
         self.validate_key(key)
-
-        try:
-            return self._memory[key]
-        except:
-            # Empty memory segments are just empty
-            return 0
+        return self._memory[key]
 
     def __setitem__(self, key: int, value: int) -> None:
         self.validate_key(key)
