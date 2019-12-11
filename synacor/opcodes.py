@@ -12,6 +12,7 @@ def absolute(*args: str) -> Callable:
     """Decorator to list any parameters that shouldn't be dereferenced if they
     are register addresses.
     """
+
     def absolute_func(func: Callable) -> Callable:
         @functools.wraps(func)
         def decorated(*args, **kwargs):
@@ -21,6 +22,7 @@ def absolute(*args: str) -> Callable:
         decorated.absolute_params = args
 
         return decorated
+
     return absolute_func
 
 
@@ -88,7 +90,7 @@ class Opcodes(object):
         """Push <a> onto the stack"""
         self.memory.stack.push(value)
 
-    @absolute('destination')
+    @absolute("destination")
     def op_pop(self, destination: int) -> None:
         """Remove the top element from the stack and write it into <a>; empty stack = error"""
         if len(self.memory.stack) == 0:
@@ -180,7 +182,7 @@ class Opcodes(object):
         """Write the character represented by ascii code <a> to the terminal"""
         print(chr(charcode), end="")
 
-    @absolute('destination')
+    @absolute("destination")
     def op_in(self, destination: int):
         """Read a character from the terminal and write its ascii code to <a>; it can be assumed that once input
          starts, it will continue until a newline is encountered; this means that you can safely read whole lines
@@ -194,7 +196,7 @@ class Opcodes(object):
     def _calculate_method_params(self) -> Dict[str, Dict[str, bool]]:
         """Return information about the op_* methods"""
         params: Dict[str, Dict[str, bool]] = {}
-        methods = [x for x in dir(self) if x.startswith('op_')]
+        methods = [x for x in dir(self) if x.startswith("op_")]
 
         for method_name in methods:
             method = getattr(self, method_name)
