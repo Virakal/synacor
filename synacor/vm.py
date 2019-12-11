@@ -1,6 +1,6 @@
 from synacor.binparser import BinParser
 from synacor.memory import Memory
-from synacor.opcode import Opcode
+from synacor.opcode import Opcodes
 
 
 class VM(object):
@@ -13,16 +13,8 @@ class VM(object):
         self.parse_from_pointer()
 
     def parse_from_pointer(self) -> None:
+        opcodes = Opcodes(self.memory)
+
         while True:
             # This loop should be terminated by a halt instruction
-            command = self.get_next_command()
-            self.execute_command(command)
-
-    def get_next_command(self) -> Opcode:
-        code_int = self.memory.get_at_pointer()
-        return Opcode.from_int(code_int)
-
-    def execute_command(self, command: Opcode) -> None:
-        mem = self.memory
-        mem.increment_pointer()
-        command.run(mem)
+            opcodes.run(self.memory.pop_argument(False))

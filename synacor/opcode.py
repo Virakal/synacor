@@ -1,271 +1,198 @@
+import inspect
+import functools
 import sys
-from typing import Mapping
+from typing import Callable, Dict, List
 
 from synacor.memory import Memory
 
 MATHS_MODULO = 32768
 
 
-class Opcode(object):
-    """An invalid opcode"""
+def absolute(*args: str) -> Callable:
+    """Decorator to list any parameters that shouldn't be dereferenced if they
+    are register addresses.
+    """
+    def absolute_func(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs)
 
-    _opcodes: Mapping[int, "Opcode"] = {}
+        # Record dereferenced parameters on the function
+        decorated.absolute_params = args
 
-    @property
-    def name(self) -> str:
-        name = self.__class__.__name__
-        return name.replace("Opcode", "").lower()
-
-    @staticmethod
-    def from_int(opcode_int: int):
-        return Opcode._opcodes[opcode_int]
-
-    def run(self, memory: Memory) -> None:
-        raise NotImplementedError("Invalid opcode")
+        return decorated
+    return absolute_func
 
 
-class HaltOpcode(Opcode):
-    """Stop execution and terminate the program"""
+class Opcodes(object):
+    # Map opcode numbers to their names
+    OPCODE_NAMES = {
+        0: "halt",
+        1: "set",
+        2: "push",
+        3: "pop",
+        4: "eq",
+        5: "gt",
+        6: "jmp",
+        7: "jt",
+        8: "jf",
+        9: "add",
+        10: "mult",
+        11: "mod",
+        12: "and",
+        13: "or",
+        14: "not",
+        15: "rmem",
+        16: "wmem",
+        17: "call",
+        18: "ret",
+        19: "out",
+        20: "in",
+        21: "noop",
+    }
 
-    def run(self, memory: Memory) -> None:
+    def __init__(self, memory: Memory) -> None:
+        super().__init__()
+        self.memory = memory
+
+    def run(self, opcode: int) -> None:
+        try:
+            op_name = self.OPCODE_NAMES[opcode]
+        except KeyError as e:
+            # Worth handling this?
+            raise
+
+        method_name = "op_" + op_name
+        method = getattr(self, method_name)
+        signature = inspect.signature(method)
+        params_to_pass: Dict[str, int] = {}
+
+        for param_name in signature.parameters:
+            # Check if method has a dereference annotation
+            # TODO: Do this at load instead of call time
+            try:
+                dereference = param_name not in method.absolute_params
+            except (AttributeError):
+                dereference = True
+
+            params_to_pass[param_name] = self.memory.pop_argument(dereference)
+
+        # Call the method with the arguments
+        method(**params_to_pass)
+
+    def op_halt(self) -> None:
+        """Stop execution and terminate the program"""
         print("Halting execution", file=sys.stderr)
         exit()
 
+    @absolute("register_index")
+    def op_set(self, register_index: int, value: int) -> None:
+        """Set register <a> to the value of <b>"""
+        self.memory[register_index] = value
 
-class SetOpcode(Opcode):
-    """Set register <a> to the value of <b>"""
+    def op_push(self, value: int) -> None:
+        """Push <a> onto the stack"""
+        self.memory.stack.push(value)
 
-    def run(self, memory: Memory) -> None:
-        register_index = memory.pop_argument(False)
-        value = memory.pop_argument()
-        memory[register_index] = value
+    @absolute('destination')
+    def op_pop(self, destination: int) -> None:
+        """Remove the top element from the stack and write it into <a>; empty stack = error"""
+        if len(self.memory.stack) == 0:
+            raise RecursionError("Tried to call pop with an empty stack")
 
+        self.memory[destination] = self.memory.stack.pop()
 
-class PushOpcode(Opcode):
-    """Push <a> onto the stack"""
+    @absolute("destination")
+    def op_eq(self, destination: int, op1: int, op2: int) -> None:
+        """Set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise"""
+        self.memory[destination] = int(op1 == op2)
 
-    def run(self, memory: Memory) -> None:
-        value = memory.pop_argument()
-        memory.stack.push(value)
+    @absolute("destination")
+    def op_gt(self, destination: int, op1: int, op2: int) -> None:
+        """Set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise"""
+        self.memory[destination] = int(op1 > op2)
 
+    def op_jmp(self, new_address: int) -> None:
+        """Jump to <a>"""
+        self.memory.pointer = new_address
 
-class PopOpcode(Opcode):
-    """Remove the top element from the stack and write it into <a>; empty stack = error"""
+    def op_jt(self, test: int, new_address: int) -> None:
+        """If <a> is nonzero, jump to <b>"""
+        if test != 0:
+            self.memory.pointer = new_address
 
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        memory[destination] = memory.stack.pop()
-
-
-class EqOpcode(Opcode):
-    """Set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = int(op1 == op2)
-
-
-class GtOpcode(Opcode):
-    """Set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = int(op1 > op2)
-
-
-class JmpOpcode(Opcode):
-    """Jump to <a>"""
-
-    def run(self, memory: Memory) -> None:
-        new_address = memory.get_at_pointer()
-        memory.pointer = new_address
-
-
-class JtOpcode(Opcode):
-    """If <a> is nonzero, jump to <b>"""
-
-    def run(self, memory: Memory) -> None:
-        test = memory.pop_argument()
-        new_address = memory.pop_argument()
-
-        if test > 0:
-            memory.pointer = new_address
-
-
-class JfOpcode(Opcode):
-    """If <a> is zero, jump to <b>"""
-
-    def run(self, memory: Memory) -> None:
-        test = memory.pop_argument()
-        new_address = memory.pop_argument()
-
+    def op_jf(self, test: int, new_address: int) -> None:
+        """If <a> is zero, jump to <b>"""
         if test == 0:
-            memory.pointer = new_address
+            self.memory.pointer = new_address
 
+    @absolute("destination")
+    def op_add(self, destination: int, op1: int, op2: int) -> None:
+        """Store into <a> the sum of <b> and <c> (modulo 32768)"""
+        self.memory[destination] = (op1 + op2) % MATHS_MODULO
 
-class AddOpcode(Opcode):
-    """Assign into <a> the sum of <b> and <c> (modulo 32768)"""
+    @absolute("destination")
+    def op_mult(self, destination: int, op1: int, op2: int) -> None:
+        """Store into <a> the product of <b> and <c> (modulo 32768)"""
+        self.memory[destination] = (op1 * op2) % MATHS_MODULO
 
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
+    @absolute("destination")
+    def op_mod(self, destination: int, op1: int, op2: int) -> None:
+        """Store into <a> the remainder of <b> divided by <c>"""
+        self.memory[destination] = op1 % op2
 
-        memory[destination] = (op1 + op2) % MATHS_MODULO
+    @absolute("destination")
+    def op_and(self, destination: int, op1: int, op2: int) -> None:
+        """Stores into <a> the bitwise and of <b> and <c>"""
+        self.memory[destination] = op1 & op2
 
+    @absolute("destination")
+    def op_or(self, destination: int, op1: int, op2: int) -> None:
+        """Stores into <a> the bitwise or of <b> and <c>"""
+        self.memory[destination] = op1 | op2
 
-class MultOpcode(Opcode):
-    """Store into <a> the product of <b> and <c> (modulo 32768)"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = (op1 * op2) % MATHS_MODULO
-
-
-class ModOpcode(Opcode):
-    """Store into <a> the remainder of <b> divided by <c>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = op1 % op2
-
-
-class AndOpcode(Opcode):
-    """Stores into <a> the bitwise and of <b> and <c>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = op1 & op2
-
-
-class OrOpcode(Opcode):
-    """Stores into <a> the bitwise or of <b> and <c>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        op1 = memory.pop_argument()
-        op2 = memory.pop_argument()
-
-        memory[destination] = op1 | op2
-
-
-class NotOpcode(Opcode):
-    """Stores 15-bit bitwise inverse of <b> in <a>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        value = memory.pop_argument()
+    @absolute("destination")
+    def op_not(self, destination: int, value: int) -> None:
+        """Stores 15-bit bitwise inverse of <b> in <a>"""
         new_value = MATHS_MODULO - 1 - value
-        memory[destination] = new_value
+        self.memory[destination] = new_value
 
+    @absolute("destination")
+    def op_rmem(self, destination: int, source: int) -> None:
+        """Read memory at address <b> and write it to <a>"""
+        value = self.memory[source]
+        self.memory[destination] = value
 
-class RmemOpcode(Opcode):
-    """Read memory at address <b> and write it to <a>"""
+    @absolute("destination")
+    def op_wmem(self, destination: int, source: int) -> None:
+        """Write the value from <b> into memory at address <a>"""
+        self.memory[self.memory[destination]] = source
 
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        source = memory.pop_argument()
+    def op_call(self, destination: int) -> None:
+        """Write the address of the next instruction to the stack and jump to <a>"""
+        next_instruction = self.memory.pointer
+        self.memory.stack.push(next_instruction)
+        self.op_jmp(destination)
 
-        value = memory[source]
-        memory[destination] = value
-
-
-class WmemOpcode(Opcode):
-    """Write the value from <b> into memory at address <a>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument(False)
-        source = memory.pop_argument()
-
-        value = source
-        memory[memory[destination]] = value
-
-
-class CallOpcode(Opcode):
-    """Write the address of the next instruction to the stack and jump to <a>"""
-
-    def run(self, memory: Memory) -> None:
-        destination = memory.pop_argument()
-        next_instruction = memory.pointer
-
-        memory.stack.push(next_instruction)
-        memory.pointer = destination
-
-
-class RetOpcode(Opcode):
-    """Remove the top element from the stack and jump to it; empty stack = halt"""
-
-    def run(self, memory: Memory) -> None:
-        if len(memory.stack) == 0:
+    def op_ret(self) -> None:
+        """Remove the top element from the stack and jump to it; empty stack = halt"""
+        if len(self.memory.stack) == 0:
             raise RecursionError("Tried to call ret with an empty stack")
 
-        destination = memory.stack.pop()
-        memory.pointer = destination
+        destination = self.memory.stack.pop()
+        self.op_jmp(destination)
 
-
-class OutOpcode(Opcode):
-    """Write the character represented by ascii code <a> to the terminal"""
-
-    def run(self, memory: Memory) -> None:
-        charcode = memory.pop_argument()
+    def op_out(self, charcode: int) -> None:
+        """Write the character represented by ascii code <a> to the terminal"""
         print(chr(charcode), end="")
 
-
-class InOpcode(Opcode):
-    """Read a character from the terminal and write its ascii code to <a>; it can be assumed that once input
-     starts, it will continue until a newline is encountered; this means that you can safely read whole lines
-     from the keyboard and trust that they will be fully read"""
-
-    def run(self, memory: Memory) -> None:
-        # NYI
+    @absolute('destination')
+    def op_in(self, destination: int):
+        """Read a character from the terminal and write its ascii code to <a>; it can be assumed that once input
+         starts, it will continue until a newline is encountered; this means that you can safely read whole lines
+         from the keyboard and trust that they will be fully read"""
         raise NotImplementedError("'In' opcode not yet implemented")
 
-
-class NoopOpcode(Opcode):
-    """No operation"""
-
-    def run(self, memory: Memory) -> None:
-        # Don't do anything
+    def op_noop(self) -> None:
+        """No operation"""
         pass
-
-
-# Initialise the opcode cache
-Opcode._opcodes = {
-    0: HaltOpcode(),
-    1: SetOpcode(),
-    2: PushOpcode(),
-    3: PopOpcode(),
-    4: EqOpcode(),
-    5: GtOpcode(),
-    6: JmpOpcode(),
-    7: JtOpcode(),
-    8: JfOpcode(),
-    9: AddOpcode(),
-    10: MultOpcode(),
-    11: ModOpcode(),
-    12: AndOpcode(),
-    13: OrOpcode(),
-    14: NotOpcode(),
-    15: RmemOpcode(),
-    16: WmemOpcode(),
-    17: CallOpcode(),
-    18: RetOpcode(),
-    19: OutOpcode(),
-    20: InOpcode(),
-    21: NoopOpcode(),
-}
