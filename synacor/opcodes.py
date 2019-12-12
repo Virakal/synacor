@@ -1,7 +1,7 @@
 import inspect
 import functools
 import sys
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Literal, Optional
 
 from synacor.memory import Memory
 
@@ -59,7 +59,7 @@ class Opcodes:
         self._method_params = self._calculate_method_params()
         self._char_generator = self.get_char_generator()
 
-    def run(self, opcode: int) -> None:
+    def run(self, opcode: int) -> Optional[bool]:
         try:
             op_name = self.OPCODE_NAMES[opcode]
         except KeyError as e:
@@ -75,12 +75,12 @@ class Opcodes:
             kwargs[param_name] = self.memory.pop_argument(dereference)
 
         # Call the method with the arguments
-        method(**kwargs)
+        return method(**kwargs)
 
-    def op_halt(self) -> None:
+    def op_halt(self) -> Literal[True]:
         """Stop execution and terminate the program"""
         print("Halting execution", file=sys.stderr)
-        exit()
+        return True
 
     @absolute("register_index")
     def op_set(self, register_index: int, value: int) -> None:

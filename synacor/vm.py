@@ -17,4 +17,7 @@ class VM:
 
         while True:
             # This loop should be terminated by a halt instruction
-            opcodes.run(self.memory.pop_argument(False))
+            should_stop = opcodes.run(self.memory.pop_argument(False))
+
+            if should_stop:
+                break
