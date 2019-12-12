@@ -1,11 +1,7 @@
+from array import array
 from typing import List, Optional
 
 from synacor.stack import Stack
-
-try:
-    import numpy
-except ImportError:
-    from array import array
 
 
 class Memory(object):
@@ -15,13 +11,9 @@ class Memory(object):
 
     def __init__(self) -> None:
         super().__init__()
+        self._memory = array('I', (0 for x in range(self.MAX_MEMORY_OFFSET + 1)))
         self._pointer = 0
         self.stack = Stack()
-
-        if "numpy" in globals():
-            self._memory = numpy.zeros((32776,), dtype=numpy.dtype("<u2"))
-        else:
-            self._memory = array("I", (0 for x in range(self.MAX_MEMORY_OFFSET + 1)))
 
     def __getitem__(self, key: int) -> int:
         self.validate_key(key)
@@ -53,7 +45,6 @@ class Memory(object):
 
     @pointer.setter
     def pointer(self, new_value: int) -> None:
-        new_value = int(new_value)
         self.validate_pointer(new_value)
         self._pointer = new_value
 
@@ -112,6 +103,9 @@ class Memory(object):
         return value
 
     def validate_key(self, key: int) -> None:
+        if not type(key) == int:
+            raise KeyError("Memory index must be an int")
+
         if key < 0:
             raise KeyError("Memory index must not be negative")
 
@@ -121,11 +115,15 @@ class Memory(object):
             )
 
     def validate_value(self, value: int) -> None:
-        pass
+        if not type(value) == int:
+            raise ValueError("Memory value must be an int")
 
     def validate_pointer(self, pointer: Optional[int] = None) -> None:
         if pointer is None:
             pointer = self.pointer
+
+        if not type(pointer) == int:
+            raise ValueError("Pointer is not an int!")
 
         if pointer < 0:
             raise ValueError("Pointer must not be negative")
@@ -134,6 +132,9 @@ class Memory(object):
             raise ValueError(f"Pointer must be between 0 and {self.MAX_MEMORY_OFFSET}")
 
     def validate_register_index(self, index: int) -> None:
+        if not type(index) == int:
+            raise KeyError("Register index must be an int")
+
         if index < 0:
             raise KeyError("Register index must not be negative")
 

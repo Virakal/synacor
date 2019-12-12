@@ -130,8 +130,7 @@ class Opcodes(object):
     @absolute("destination")
     def op_mult(self, destination: int, op1: int, op2: int) -> None:
         """Store into <a> the product of <b> and <c> (modulo 32768)"""
-        # int casts prevent a warning when using numpy
-        self.memory[destination] = (int(op1) * int(op2)) % MATHS_MODULO
+        self.memory[destination] = (op1 * op2) % MATHS_MODULO
 
     @absolute("destination")
     def op_mod(self, destination: int, op1: int, op2: int) -> None:
