@@ -57,6 +57,7 @@ class Opcodes(object):
         super().__init__()
         self.memory = memory
         self._method_params = self._calculate_method_params()
+        self._char_generator = self.get_char_generator()
 
     def run(self, opcode: int) -> None:
         try:
@@ -186,11 +187,26 @@ class Opcodes(object):
         """Read a character from the terminal and write its ascii code to <a>; it can be assumed that once input
          starts, it will continue until a newline is encountered; this means that you can safely read whole lines
          from the keyboard and trust that they will be fully read"""
-        raise NotImplementedError("'In' opcode not yet implemented")
+        self.memory[destination] = next(self._char_generator)
 
     def op_noop(self) -> None:
         """No operation"""
         pass
+
+    def get_char_generator(self):
+        """Creates a generator that yields individual characters for every "in"
+         opcode call
+        """
+        while True:
+            # Fetch input
+            line = input('>>> ')
+
+            # Yield the next character
+            for char in line:
+                yield ord(char)
+
+            # Yield a newline to finish the input
+            yield ord("\n")
 
     def _calculate_method_params(self) -> Dict[str, Dict[str, bool]]:
         """Return information about the op_* methods"""
