@@ -4,7 +4,7 @@ from typing import List, Optional
 from synacor.stack import Stack
 
 
-class Memory(object):
+class Memory:
     MAX_MEMORY_OFFSET = 32775
     REGISTER_COUNT = 8
     REGISTER_OFFSET = MAX_MEMORY_OFFSET - REGISTER_COUNT

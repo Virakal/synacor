@@ -26,7 +26,7 @@ def absolute(*args: str) -> Callable:
     return absolute_func
 
 
-class Opcodes(object):
+class Opcodes:
     # Map opcode numbers to their names
     OPCODE_NAMES = {
         0: "halt",

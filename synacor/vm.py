@@ -3,7 +3,7 @@ from synacor.memory import Memory
 from synacor.opcodes import Opcodes
 
 
-class VM(object):
+class VM:
     def __init__(self) -> None:
         self.memory = Memory()
 

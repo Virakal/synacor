@@ -5,7 +5,7 @@ from typing import List
 from synacor.memory import Memory
 
 
-class BinParser(object):
+class BinParser:
     HIGH_BYTE_OFFSET = 2 ** 8
 
     def __init__(self, memory: Memory) -> None:

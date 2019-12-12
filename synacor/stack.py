@@ -1,7 +1,7 @@
 from array import array
 
 
-class Stack(object):
+class Stack:
     def __init__(self) -> None:
         super().__init__()
         self._stack: array[int] = array('I')
