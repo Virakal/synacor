@@ -160,10 +160,9 @@ class Opcodes(object):
         value = self.memory[source]
         self.memory[destination] = value
 
-    @absolute("destination")
     def op_wmem(self, destination: int, source: int) -> None:
         """Write the value from <b> into memory at address <a>"""
-        self.memory[self.memory[destination]] = source
+        self.memory[destination] = source
 
     def op_call(self, destination: int) -> None:
         """Write the address of the next instruction to the stack and jump to <a>"""
