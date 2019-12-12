@@ -195,9 +195,9 @@ class Opcodes(object):
     def _calculate_method_params(self) -> Dict[str, Dict[str, bool]]:
         """Return information about the op_* methods"""
         params: Dict[str, Dict[str, bool]] = {}
-        methods = [x for x in dir(self) if x.startswith("op_")]
 
-        for method_name in methods:
+        for op_name in self.OPCODE_NAMES.values():
+            method_name = "op_" + op_name
             method = getattr(self, method_name)
             signature = inspect.signature(method)
             params[method_name] = {}
