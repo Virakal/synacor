@@ -5,6 +5,7 @@
         "Rmem",
         "Wmem",
         "ints",
+        "iologger",
         "opcode",
         "opcodes",
         "pylint",

@@ -4,6 +4,7 @@ import sys
 from typing import Callable, Dict, List, Literal, Optional
 
 from synacor.memory import Memory
+from synacor.iologger import IOLogger
 
 MATHS_MODULO = 32768
 
@@ -53,9 +54,10 @@ class Opcodes:
         21: "noop",
     }
 
-    def __init__(self, memory: Memory) -> None:
+    def __init__(self, memory: Memory, io_logger: IOLogger) -> None:
         super().__init__()
         self.memory = memory
+        self.io_logger = io_logger
         self._method_params = self._calculate_method_params()
         self._char_generator = self.get_char_generator()
 
@@ -180,6 +182,7 @@ class Opcodes:
 
     def op_out(self, charcode: int) -> None:
         """Write the character represented by ascii code <a> to the terminal"""
+        self.io_logger.log_output(chr(charcode))
         print(chr(charcode), end="")
 
     @absolute("destination")
@@ -199,7 +202,8 @@ class Opcodes:
         """
         while True:
             # Fetch input
-            line = input('>>> ')
+            line = input(">>> ")
+            self.io_logger.log_input(line)
 
             # Yield the next character
             for char in line:
