@@ -1,4 +1,4 @@
 -e .
-black==19.10b0
+black==24.3.0
 mypy==0.750
 pylint==2.4.4
